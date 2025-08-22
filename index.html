@@ -6,7 +6,6 @@
 
 <body class="rally-idle">
 
-
   <div class="card options">
     <div class="points">
       <label><input type="radio" name="pts" id="pts11" checked /> to 11</label>
@@ -21,22 +20,16 @@
     </div>
   </div>
 
-    <!-- Division input replaces the H1 title -->
-  <input id="divisionInput"
-         class="title-input"
-         placeholder="Division" />
-
-
+  <!-- Division input replaces the H1 title -->
+  <input id="divisionInput" class="title-input" placeholder="Division" />
 
   <div class="grid" id="namesGrid">
     <!-- TEAM A -->
     <div class="team card" id="teamA">
       <h2>Team A</h2>
 
-      <!-- BIG won arrow hint (LIVE only) -->
       <div id="wonHintA" class="won-hint" style="display:none;"></div>
 
-      <!-- Tally + TMO (hidden until after start) -->
       <div class="tally-wrap" id="tallyWrapA" style="display:none;">
         <button id="tmoA" class="tmo-btn secondary" style="display:none;">Time-out</button>
         <div id="tallyA" class="tally"></div>
@@ -63,10 +56,8 @@
     <div class="team card" id="teamB">
       <h2>Team B</h2>
 
-      <!-- BIG won arrow hint (LIVE only) -->
       <div id="wonHintB" class="won-hint" style="display:none;"></div>
 
-      <!-- Tally + TMO (hidden until after start) -->
       <div class="tally-wrap" id="tallyWrapB" style="display:none;">
         <button id="tmoB" class="tmo-btn secondary" style="display:none;">Time-out</button>
         <div id="tallyB" class="tally"></div>
@@ -102,7 +93,7 @@
     </label>
   </div>
 
-    <!-- BIG Score + BIG Status card (STATUS on the LEFT, SCORE on the RIGHT) -->
+  <!-- BIG Score + BIG Status card -->
   <div class="card score-card" aria-disabled="false">
     <div class="score-line">
       <div id="rallyStatus" class="rally-status"></div>
@@ -117,39 +108,29 @@
     <div class="row">
       <button id="clearSignBtn" class="secondary">Clear</button>
       <button id="doneSignBtn" class="primary">Done</button>
-      <!-- NEW: Save as PNG -->
       <button id="savePngBtn" class="secondary">Save PNG</button>
     </div>
   </div>
 
-<!-- Dice Result modal -->
-<div id="diceModal" class="modal" style="display:none;">
-  <div class="modal-backdrop"></div>
-  <div class="modal-dialog" role="dialog" aria-modal="true">
-    <div class="modal-body dice-result-body">
-      
-      <!-- Verdict always at top -->
-      <div id="diceVerdict" class="dice-verdict"></div>
+  <!-- Dice Result modal -->
+  <div id="diceModal" class="modal" style="display:none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true">
+      <div class="modal-body dice-result-body">
+        <!-- Single verdict at top -->
+        <div id="diceVerdict" class="dice-verdict"></div>
 
-      <!-- Stage B choices -->
-      <div id="diceChoices" class="dice-options">
-        <div id="diceOptA" class="dice-option" data-val=""></div>
-        <div id="diceOptB" class="dice-option" data-val=""></div>
+        <!-- Stage B choices -->
+        <div id="diceChoices" class="dice-options">
+          <div id="diceOptA" class="dice-option" data-val=""></div>
+          <div id="diceOptB" class="dice-option" data-val=""></div>
+        </div>
+
+        <!-- Stage C final reveal -->
+        <div id="diceFinal" class="mt-12 hidden"></div>
       </div>
-
-<!-- Stage C final reveal -->
-<div id="diceFinal" class="mt-12 hidden">
-  <div id="resultCard" class="result-card">
-    <div class="dice-verdict" id="diceVerdict"></div>
-    <div class="dice-outcome" id="diceOutcome"></div>
-  </div>
-</div>
-
     </div>
   </div>
-</div>
-
-
 
   <!-- Reset confirmation modal -->
   <div id="resetModal" class="modal" style="display:none;">
@@ -167,9 +148,8 @@
 
   <script type="module" src="app.js"></script>
   <script type="module" src="tally.js"></script>
-  <script type="module" src="dice.js"></script>
+  <!-- REMOVED: duplicate dice.js include -->
 
-  <!-- NEW: html2canvas for PNG capture -->
+  <!-- html2canvas for PNG capture -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
 </body>

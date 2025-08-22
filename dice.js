@@ -1,7 +1,7 @@
-// dice.js — Image-based chooser (Drillyard/Naya/Livwell)
+// dice.js — Image-based chooser (Drillyard/Naya/Livwell) with 36/32/32 weighting
 console.log("dice.js loaded");
 
-// Accessibility labels
+// Labels for alt text
 const LABELS = {
   1: 'Drillyard',
   2: 'Naya',
@@ -19,11 +19,11 @@ const $ = (id) => document.getElementById(id);
 
 // ---------- RNG helpers ----------
 function weightedFirst() {
-  // 40% Drillyard, 30% Naya, 30% Livwell
+  // 36% Drillyard, 32% Naya, 32% Livwell
   const n = Math.floor(Math.random() * 100); // 0..99
-  if (n <36) return 1;       // Drillyard
-  if (n < 68) return 2;       // Naya
-  return 3;                   // Livwell
+  if (n < 36) return 1;        // Drillyard
+  if (n < 68) return 2;        // Naya (36–67)
+  return 3;                    // Livwell (68–99)
 }
 function secondFromRemaining(a) {
   const rem = [1, 2, 3].filter(v => v !== a);
@@ -47,17 +47,14 @@ function clearVerdictClass() {
 function resetModal() {
   clearVerdictClass();
 
-  // Clear verdict text at the very top
   const verdict = $('diceVerdict');
   if (verdict) verdict.textContent = '';
 
-  // Reset containers
   const choices = $('diceChoices');
   const finalV  = $('diceFinal');
   if (choices) { choices.style.display = ''; choices.classList.remove('hidden'); }
   if (finalV)  { finalV.classList.add('hidden'); finalV.innerHTML = ''; }
 
-  // Reset option cards
   const a = $('diceOptA');
   const b = $('diceOptB');
   if (a) { a.innerHTML = ''; a.dataset.val = ''; a.classList.remove('disabled'); }
@@ -70,7 +67,7 @@ function hideModal(){ const m=$('diceModal'); if (m){ m.style.display='none'; re
 // ---------- DOM helpers ----------
 function setOptionImage(el, id) {
   if (!el) return;
-  el.innerHTML = ''; // wipe previous content
+  el.innerHTML = '';
   const img = document.createElement('img');
   img.src = IMAGES[id];
   img.alt = LABELS[id];
@@ -99,35 +96,27 @@ function onPick(evt){
   if (!pickedStr) return;
   const picked = Number(pickedStr);
 
-  // Lock the two cards
   const a = $('diceOptA'); a?.classList.add('disabled');
   const b = $('diceOptB'); b?.classList.add('disabled');
 
   const shownA = Number(a?.dataset?.val || '0');
   const shownB = Number(b?.dataset?.val || '0');
 
-  // Final 50/50 reveal
   const outcome = finalOutcome(shownA, shownB);
   const correct = (outcome === picked);
   setVerdictClass(correct);
 
-  // Top verdict text (outside the result card)
-  const verdictText = correct ? 'Correct' : 'Wrong';
   const verdictEl = $('diceVerdict');
-  if (verdictEl) verdictEl.textContent = verdictText;
+  if (verdictEl) verdictEl.textContent = correct ? 'Correct' : 'Wrong';
 
-  // Hide the two option boxes
   const choices = $('diceChoices');
   if (choices) choices.style.display = 'none';
 
-  // Show ONE result card with the actual outcome image
   const finalView = $('diceFinal');
   if (finalView) {
-    const outcomeLabel = LABELS[outcome];
-    const outcomeSrc   = IMAGES[outcome];
     finalView.innerHTML = `
       <div class="result-card ${correct ? 'ok' : 'fail'}" role="status" aria-live="polite">
-        <img src="${outcomeSrc}" alt="${outcomeLabel}" />
+        <img src="${IMAGES[outcome]}" alt="${LABELS[outcome]}" />
       </div>
     `;
     finalView.classList.remove('hidden');
@@ -136,18 +125,13 @@ function onPick(evt){
 
 // ---------- public init ----------
 export function initDice(){
-  // Trigger button
   $('diceBtn')?.addEventListener('click', startRound);
-
-  // Stacked card picks
   $('diceOptA')?.addEventListener('click', onPick);
   $('diceOptB')?.addEventListener('click', onPick);
 
-  // Backdrop closes & resets
   const backdrop = $('diceModal')?.querySelector('.modal-backdrop');
   backdrop?.addEventListener('click', hideModal);
 
-  // Debug helpers
   if (typeof window !== 'undefined') {
     window.dice = { start: startRound, close: hideModal };
   }

@@ -311,4 +311,15 @@ body.rally-live { background: #ffffff; transition: background 120ms ease-in-out;
 
 .dice-options { margin-top: 0; }
 
+/* === Dice images sizing === */
+.dice-option img,
+.result-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;  /* keep aspect ratio inside the square */
+  display: block;
+  padding: 12px;        /* gives a little breathing room in the card */
+}
+
+
 

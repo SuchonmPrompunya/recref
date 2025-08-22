@@ -1,0 +1,314 @@
+/* ================= Base & Layout ================= */
+:root {
+  --gap: 12px;
+  --card-pad: 12px;
+  --tally-col-w: 40px; /* tally column width */
+}
+
+html, body { height: 100%; }
+html, body { margin: 0; }
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: 16px; /* page breathing room */
+}
+
+/* Options row stays natural height; score + grid stretch */
+.card.options { flex: 0 0 auto; }
+.card.score-card {
+  flex: 1 1 0;
+  display: flex;
+  padding: 16px 18px;
+}
+
+/* The two team cards area also fills remaining height */
+.grid {
+  flex: 1 1 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: var(--gap);
+  align-items: stretch;   /* make children full height */
+}
+
+/* Each team card stretches to full height within the grid cell */
+.team.card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Generic card look */
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: var(--card-pad);
+  background: #fff;
+}
+
+/* Center the big score/status vertically & horizontally */
+.score-card .score-line {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;         /* vertical center */
+  justify-content: center;     /* horizontal center */
+  gap: 20px;
+  text-align: center;
+}
+
+/* Basic text */
+h1 { font-size: 20px; margin: 0; }
+.row { display: flex; gap: var(--gap); margin: 12px 0; }
+button { padding: 12px 14px; font-size: 16px; border-radius: 12px; border: 1px solid #ccc; cursor: pointer; }
+button.primary { border-color: #bbb; }
+button.secondary { border-color: #ddd; }
+button:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ================= Player rows ================= */
+.player-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto; /* default RIGHT shape */
+  grid-template-rows: 28px auto;
+  align-items: center;
+  column-gap: 6px;
+  row-gap: 6px;
+  margin-top: 8px;
+}
+
+.player-row .serve-holder { grid-column: 2; grid-row: 1; align-self: center; }
+.player-row .badge        { grid-column: 3; grid-row: 1; align-self: center; white-space: nowrap; }
+
+.player-row input {
+  grid-column: 1 / 4; grid-row: 2;
+  width: 100%; max-width: 100%; min-width: 0;
+  padding: 10px; border-radius: 10px; border: 1px solid #ccc;
+  box-sizing: border-box; display: block;
+}
+.player-row > * { min-width: 0; }
+
+/* LEFT column mirror */
+.grid > .team:first-child .player-row {
+  grid-template-columns: auto auto 1fr;
+}
+.grid > .team:first-child .player-row .badge        { grid-column: 1; }
+.grid > .team:first-child .player-row .serve-holder { grid-column: 2; }
+
+/* Serve widget cluster */
+.serve-unit { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+.serve-unit input { margin: 0; }
+
+/* RIGHT card: "□ Serve" */
+.grid > .team:last-child .serve-holder .serve-unit { flex-direction: row; }
+
+/* LEFT card: "Serve □" */
+.grid > .team:first-child .serve-holder .serve-unit {
+  flex-direction: row-reverse;
+  white-space: nowrap;
+}
+
+/* Let cluster size naturally */
+.serve-holder { width: auto; min-width: 0; max-width: none; text-align: left; }
+
+/* Badges */
+.badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 10px;
+  background: #eee;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+}
+.badge.serving   { background: #dff4d8; }
+.badge.receiving { background: #d8e7f4; }
+.badge:empty { display: none; }
+
+.stat { display:flex; justify-content: space-between; margin: 4px 0; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.options { display: flex; justify-content: space-between; align-items: center; gap: var(--gap); }
+.points label { margin-right: 10px; }
+
+/* Team actions area */
+.team-actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: auto; }
+
+/* Whole card becomes a button after first rally */
+.team.clickable { cursor: pointer; user-select: none; }
+.team.clickable:hover { box-shadow: 0 0 0 3px rgba(0,0,0,.06) inset; }
+.team.clickable .player-row input { pointer-events: none; }
+
+/* ================= BIG Score text ================= */
+.sideout-score, .rally-status {
+  font-weight: 800; line-height: 1.05;
+  font-size: clamp(36px, 7.2vw, 60px);
+  color: #111;
+}
+.is-green { color: #16a34a; }
+
+/* ================= BIG won hints ================= */
+.won-hint {
+  pointer-events: none; text-align: center;
+  font-weight: 900; letter-spacing: 0.5px; color: #111;
+  font-size: clamp(22px, 5.2vw, 40px);
+  line-height: 1.1; margin: 2px 0 8px;
+  white-space: nowrap;
+}
+
+/* ================= Tally ================= */
+.tally-wrap { margin-top: 8px; overflow: visible; min-width: 0; }
+.tally { display: block; pointer-events: none; min-width: 0; }
+
+.tally-grid { display: flex; flex-wrap: wrap; gap: 2px; width: 100%; min-width: 0; justify-content: flex-start; }
+.tally-col { display: flex; flex-direction: column; flex: 0 0 var(--tally-col-w); width: var(--tally-col-w); }
+.tally-tmo-cell { height: 14px; display:flex; align-items:flex-end; justify-content:center; }
+.tmo-mark { font-weight: 700; font-size: 12px; line-height: 1; color: #111; }
+
+.tally-box { position: relative; height: 32px; border: 1.6px solid #000; display:flex; align-items:center; justify-content:center; background:#fff; }
+.tally-box.swap { background: #ff0000; }
+.tally-box.swap .num { color: #fff; }
+.tally-box .num { font-weight: 800; font-size: 16px; color: #111; }
+
+/* diagonal slash */
+.slash { position: absolute; top: 5%; left: 50%; width: 3px; height: 90%; background: #000; opacity: .3; transform-origin: center; }
+.slash.forward  { transform: translateX(-50%) rotate(45deg); }
+.slash.backward { transform: translateX(-50%) rotate(-45deg); }
+
+/* side-out vertical divider */
+.sideout { position: absolute; left: -3px; top: -4px; bottom: -4px; width: 6px; background: #000; }
+
+/* TMO button */
+.tmo-btn { margin-top: 6px; padding: 8px 10px; border-radius: 10px; font-size: 14px; }
+
+/* Live/Idle page background */
+body.rally-idle { background: #ff5454; transition: background 120ms ease-in-out; }
+body.rally-live { background: #ffffff; transition: background 120ms ease-in-out; }
+
+/* Score card hover/disabled styling */
+.score-card.startable { cursor: pointer; }
+.score-card.startable:hover { box-shadow: 0 0 0 3px rgba(0,0,0,.06) inset; }
+.score-card.disabled { cursor: default; opacity: 0.85; }
+
+/* ====== team card colors (as before) ====== */
+#teamA { background:#0000006f; color:#fff; }
+#teamA input { background:#ffffff; color:#000000; border-color:#444; }
+#teamA .badge { background:#23a123; color:#000000; }
+#teamA .badge.receiving { background:#0073ff; color:#d8e7f4; }
+#teamA .tally-box:not(.swap) { background:#fff; }
+#teamA .tally-box:not(.swap) .num { color:#111; }
+#teamB { background:#fff; color:#000; }
+.team.card .tally-box.swap { background:#e03131 !important; }
+.team.card .tally-box.swap .num { color:#fff !important; }
+.tally-break { flex-basis: 100%; height: 0; }
+
+/* ============== Division title input ============== */
+.title-input {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.title-input:disabled { background: #f6f6f6; color: #555; }
+
+/* ================= Modal (Reset confirm) ================= */
+.modal { position: fixed; inset: 0; z-index: 1000; }
+.modal[style*="display: none"] { pointer-events: none; }
+.modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.4);
+}
+.modal-dialog {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff; border-radius: 12px; width: min(420px, 92vw);
+  border: 1px solid #ddd; box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+.modal-body { padding: 16px; display: grid; gap: 14px; }
+.modal-title { font-size: 18px; font-weight: 700; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Dice modal verdict coloring */
+.modal-dialog.is-success .modal-body { background: #e9ffe9; transition: background 120ms ease; }
+.modal-dialog.is-error   .modal-body { background: #ffe9e9; transition: background 120ms ease; }
+
+/* simple helpers */
+.hidden { display: none !important; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+
+/* Dice modal stacked options (two big square "cards") */
+.dice-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+.dice-option {
+  display: flex;               /* use flexbox */
+  align-items: center;         /* vertical center */
+  justify-content: center;     /* horizontal center */
+  width: 100%;                 
+  aspect-ratio: 1 / 1;         
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  border: 2px solid #333;
+  border-radius: 0;            
+  background: #f8f8f8;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+.dice-option:hover  { background: #e0e0e0; }
+.dice-option:active { background: #d5d5d5; }
+.dice-option.disabled { opacity: 0.5; pointer-events: none; }
+
+/* One final result card (square). We color via .ok/.fail and place text precisely. */
+.result-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 2px solid #333;
+  border-radius: 0;
+  background: #f8f8f8;
+}
+.result-card.ok   { background: #e9ffe9; } /* greenish when correct */
+.result-card.fail { background: #ffe9e9; } /* reddish when wrong */
+
+/* Verdict word at the very top, centered horizontally */
+.result-card .dice-verdict {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  text-align: center;
+}
+
+/* Outcome name dead‑center in the square */
+.result-card .dice-outcome {
+  position: absolute;
+  top: 50%;padding: 16px; 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.dice-options { margin-top: 0; }
+
+

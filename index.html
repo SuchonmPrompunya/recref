@@ -1,0 +1,175 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pickleball — Serve/Score Tester</title>
+<link rel="stylesheet" href="styles.css" />
+
+<body class="rally-idle">
+
+
+  <div class="card options">
+    <div class="points">
+      <label><input type="radio" name="pts" id="pts11" checked /> to 11</label>
+      <label><input type="radio" name="pts" id="pts15" /> to 15</label>
+    </div>
+
+    <div class="row" id="globalRow">
+      <button id="swapSidesBtn" class="secondary">Swap Sides</button>
+      <button id="undo" class="secondary" style="display:none">Undo</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+      <button id="diceBtn" class="primary">Roll: Who decides</button>
+    </div>
+  </div>
+
+    <!-- Division input replaces the H1 title -->
+  <input id="divisionInput"
+         class="title-input"
+         placeholder="Division" />
+
+
+
+  <div class="grid" id="namesGrid">
+    <!-- TEAM A -->
+    <div class="team card" id="teamA">
+      <h2>Team A</h2>
+
+      <!-- BIG won arrow hint (LIVE only) -->
+      <div id="wonHintA" class="won-hint" style="display:none;"></div>
+
+      <!-- Tally + TMO (hidden until after start) -->
+      <div class="tally-wrap" id="tallyWrapA" style="display:none;">
+        <button id="tmoA" class="tmo-btn secondary" style="display:none;">Time-out</button>
+        <div id="tallyA" class="tally"></div>
+      </div>
+
+      <div class="player-row" data-slot="top">
+        <input id="A_top_input" placeholder="Team A — Top" />
+        <div class="serve-holder"></div>
+        <span class="badge" id="A_top_badge"></span>
+      </div>
+
+      <div class="player-row" data-slot="bot">
+        <input id="A_bot_input" placeholder="Team A — Bottom" />
+        <div class="serve-holder"></div>
+        <span class="badge" id="A_bot_badge"></span>
+      </div>
+
+      <div class="team-actions">
+        <button id="swapA" class="swap-btn secondary">Swap Players</button>
+      </div>
+    </div>
+
+    <!-- TEAM B -->
+    <div class="team card" id="teamB">
+      <h2>Team B</h2>
+
+      <!-- BIG won arrow hint (LIVE only) -->
+      <div id="wonHintB" class="won-hint" style="display:none;"></div>
+
+      <!-- Tally + TMO (hidden until after start) -->
+      <div class="tally-wrap" id="tallyWrapB" style="display:none;">
+        <button id="tmoB" class="tmo-btn secondary" style="display:none;">Time-out</button>
+        <div id="tallyB" class="tally"></div>
+      </div>
+
+      <div class="player-row" data-slot="top">
+        <input id="B_top_input" placeholder="Team B — Top" />
+        <div class="serve-holder"></div>
+        <span class="badge" id="B_top_badge"></span>
+      </div>
+
+      <div class="player-row" data-slot="bot">
+        <input id="B_bot_input" placeholder="Team B — Bottom" />
+        <div class="serve-holder"></div>
+        <span class="badge" id="B_bot_badge"></span>
+      </div>
+
+      <div class="team-actions">
+        <button id="swapB" class="swap-btn secondary">Swap Players</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Serve widgets -->
+  <div id="serveWidgets" class="sr-only">
+    <label class="serve-unit" id="BL_unit">
+      <input type="checkbox" id="BL_serve" />
+      <span>Serve</span>
+    </label>
+    <label class="serve-unit" id="TR_unit">
+      <input type="checkbox" id="TR_serve" />
+      <span>Serve</span>
+    </label>
+  </div>
+
+    <!-- BIG Score + BIG Status card (STATUS on the LEFT, SCORE on the RIGHT) -->
+  <div class="card score-card" aria-disabled="false">
+    <div class="score-line">
+      <div id="rallyStatus" class="rally-status"></div>
+      <div id="sideoutScore" class="sideout-score">0 - 0 - 2</div>
+    </div>
+  </div>
+
+  <!-- Sign Card -->
+  <div id="signCard" class="card" style="display:none;">
+    <h3 style="margin:0 0 8px 0;">Sign</h3>
+    <canvas id="signCanvas" width="300" height="150" style="width:100%;max-width:100%;display:block;border:1px dashed #ccc;border-radius:8px;"></canvas>
+    <div class="row">
+      <button id="clearSignBtn" class="secondary">Clear</button>
+      <button id="doneSignBtn" class="primary">Done</button>
+      <!-- NEW: Save as PNG -->
+      <button id="savePngBtn" class="secondary">Save PNG</button>
+    </div>
+  </div>
+
+<!-- Dice Result modal -->
+<div id="diceModal" class="modal" style="display:none;">
+  <div class="modal-backdrop"></div>
+  <div class="modal-dialog" role="dialog" aria-modal="true">
+    <div class="modal-body dice-result-body">
+      
+      <!-- Verdict always at top -->
+      <div id="diceVerdict" class="dice-verdict"></div>
+
+      <!-- Stage B choices -->
+      <div id="diceChoices" class="dice-options">
+        <div id="diceOptA" class="dice-option" data-val=""></div>
+        <div id="diceOptB" class="dice-option" data-val=""></div>
+      </div>
+
+<!-- Stage C final reveal -->
+<div id="diceFinal" class="mt-12 hidden">
+  <div id="resultCard" class="result-card">
+    <div class="dice-verdict" id="diceVerdict"></div>
+    <div class="dice-outcome" id="diceOutcome"></div>
+  </div>
+</div>
+
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- Reset confirmation modal -->
+  <div id="resetModal" class="modal" style="display:none;">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+      <div class="modal-body">
+        <div id="resetTitle" class="modal-title">Are you sure you want to reset?</div>
+        <div class="modal-actions">
+          <button id="confirmResetBtn" class="primary">Yes</button>
+          <button id="cancelResetBtn" class="secondary">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+  <script type="module" src="tally.js"></script>
+  <script type="module" src="dice.js"></script>
+
+  <!-- NEW: html2canvas for PNG capture -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+</body>
